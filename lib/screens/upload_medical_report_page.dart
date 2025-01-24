@@ -25,7 +25,6 @@ class _UploadMedicalReportPageState extends State<UploadMedicalReportPage> {
   String? _cid;
   String? _originalFileName;
 
-  // Solana DApp URL
   final String dappUrl = 'https://solanablockchain.netlify.app';
   final String refUrl = 'https://example.com';
 
@@ -57,7 +56,7 @@ class _UploadMedicalReportPageState extends State<UploadMedicalReportPage> {
   }
 
   Future<Map<String, dynamic>> _encryptFile(Uint8List fileData) async {
-    final key = encrypt.Key.fromSecureRandom(32); // 256-bit key
+    final key = encrypt.Key.fromSecureRandom(32);
     final encrypter =
         encrypt.Encrypter(encrypt.AES(key, mode: encrypt.AESMode.cbc));
     final iv = encrypt.IV.fromSecureRandom(16);
@@ -66,7 +65,7 @@ class _UploadMedicalReportPageState extends State<UploadMedicalReportPage> {
 
     setState(() {
       _encryptionKey = base64Encode(key.bytes + iv.bytes);
-       _encryptionKeyController.text = _encryptionKey!; // Automatically set the encryption key in the text field
+      _encryptionKeyController.text = _encryptionKey!;
     });
 
     return {
@@ -93,7 +92,8 @@ class _UploadMedicalReportPageState extends State<UploadMedicalReportPage> {
           },
         })
         ..files.add(
-          http.MultipartFile.fromBytes('file', encryptedData, filename: fileName),
+          http.MultipartFile.fromBytes('file', encryptedData,
+              filename: fileName),
         );
 
       final response = await request.send();
@@ -172,7 +172,6 @@ class _UploadMedicalReportPageState extends State<UploadMedicalReportPage> {
     );
   }
 
-  // New Additions Below:
   final _transactionSignatureController = TextEditingController();
   final _encryptionKeyController = TextEditingController();
   String? _selectedDoctorEmail;
@@ -203,6 +202,36 @@ class _UploadMedicalReportPageState extends State<UploadMedicalReportPage> {
   }
 
   Future<void> _saveTransactionDetails() async {
+    if (_selectedDoctorEmail == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Please select a doctor."),
+          duration: Duration(seconds: 2),
+        ),
+      );
+      return;
+    }
+
+    if (_transactionSignatureController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Please enter the Transaction Signature."),
+          duration: Duration(seconds: 2),
+        ),
+      );
+      return;
+    }
+
+    if (_encryptionKeyController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Please enter the Encryption Key."),
+          duration: Duration(seconds: 2),
+        ),
+      );
+      return;
+    }
+
     final transactionData = {
       'transactionSignature': _transactionSignatureController.text,
       'encryptionKey': _encryptionKey,
@@ -211,10 +240,28 @@ class _UploadMedicalReportPageState extends State<UploadMedicalReportPage> {
       'timestamp': DateTime.now(),
     };
 
-    await FirebaseFirestore.instance.collection('transactions').add(transactionData);
+    await FirebaseFirestore.instance
+        .collection('transactions')
+        .add(transactionData);
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Details Sent"),
+        content: const Text("Your details have been sent to the doctor."),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text("OK"),
+          ),
+        ],
+      ),
+    );
 
     setState(() {
-      _statusMessage = "Transaction details saved successfully!";
+      _transactionSignatureController.clear();
+      _encryptionKeyController.clear();
+      _selectedDoctorEmail = null; // Clear the selected doctor.
     });
   }
 
@@ -297,7 +344,7 @@ class _UploadMedicalReportPageState extends State<UploadMedicalReportPage> {
                 style: TextStyle(fontSize: 18.0),
               ),
             ),
-              DropdownButtonFormField<String>(
+            DropdownButtonFormField<String>(
               value: _selectedDoctorEmail,
               decoration: const InputDecoration(labelText: 'Select Doctor'),
               items: _doctorEmails.map((email) {
@@ -314,7 +361,8 @@ class _UploadMedicalReportPageState extends State<UploadMedicalReportPage> {
             ),
             TextField(
               controller: _transactionSignatureController,
-              decoration: const InputDecoration(labelText: 'Transaction Signature'),
+              decoration:
+                  const InputDecoration(labelText: 'Transaction Signature'),
             ),
             TextField(
               controller: _encryptionKeyController,
@@ -322,12 +370,7 @@ class _UploadMedicalReportPageState extends State<UploadMedicalReportPage> {
             ),
             ElevatedButton(
               onPressed: _saveTransactionDetails,
-              child: const Text('Save Details'),
-            ),
-            const SizedBox(height: 16.0),
-            Text(
-              _statusMessage,
-              style: const TextStyle(color: Colors.red),
+              child: const Text('Send Details'),
             ),
           ],
         ),
