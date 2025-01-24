@@ -20,6 +20,7 @@ class _UserLoginPageState extends State<UserLoginPage> {
   String _recordedFilePath = '';
   bool _isLoading = false;
   bool _voiceInputCompleted = false;
+  bool _isPasswordVisible = false; // Added for toggling password visibility
 
   void _login() async {
     setState(() {
@@ -174,14 +175,27 @@ class _UserLoginPageState extends State<UserLoginPage> {
             const SizedBox(height: 20),
             TextField(
               controller: _passwordController,
+              obscureText: !_isPasswordVisible, // Toggle password visibility
               decoration: InputDecoration(
                 labelText: 'Password',
                 prefixIcon: const Icon(Icons.lock, color: Colors.redAccent),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _isPasswordVisible
+                        ? Icons.visibility
+                        : Icons.visibility_off,
+                    color: Colors.teal,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _isPasswordVisible = !_isPasswordVisible;
+                    });
+                  },
+                ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10.0),
                 ),
               ),
-              obscureText: true,
             ),
             const SizedBox(height: 30),
             ElevatedButton.icon(

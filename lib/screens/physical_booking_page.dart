@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter/services.dart'; // Import this for FilteringTextInputFormatter
 
 class PhysicalBookingPage extends StatefulWidget {
   const PhysicalBookingPage({super.key});
@@ -250,6 +251,8 @@ class _PhysicalBookingPageState extends State<PhysicalBookingPage> {
                     TextFormField(
                       controller: _ageController,
                       decoration: const InputDecoration(labelText: 'Age'),
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter your age';
@@ -261,6 +264,8 @@ class _PhysicalBookingPageState extends State<PhysicalBookingPage> {
                     TextFormField(
                       controller: _phoneController,
                       decoration: const InputDecoration(labelText: 'Phone'),
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter your phone number';

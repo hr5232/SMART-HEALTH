@@ -23,6 +23,7 @@ class _DoctorSignupPageState extends State<DoctorSignupPage> {
   bool _isLoading = false;
   bool _voiceRecorded = false; // Track if voice input is completed
   List<String> _recordedFiles = []; // Store recorded file paths
+  bool _isPasswordVisible = false; // Track password visibility
 
   void _signUp() async {
     if (_formKey.currentState!.validate() && _voiceRecorded) {
@@ -203,11 +204,42 @@ class _DoctorSignupPageState extends State<DoctorSignupPage> {
                   inputType: TextInputType.emailAddress),
               const SizedBox(height: 10),
 
-              // Password Field
-              _buildTextField(_passwordController, 'Password',
-                  obscureText: true),
+              // Password Field with Eye Feature
+              TextFormField(
+                controller: _passwordController,
+                obscureText: !_isPasswordVisible,
+                decoration: InputDecoration(
+                  labelText: 'Password',
+                  labelStyle: const TextStyle(color: Colors.teal),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  filled: true,
+                  fillColor: Colors.grey[100],
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _isPasswordVisible
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                      color: Colors.teal,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _isPasswordVisible = !_isPasswordVisible;
+                      });
+                    },
+                  ),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter Password';
+                  }
+                  return null;
+                },
+              ),
               const SizedBox(height: 20),
-
               // Voice Input Row
               Row(
                 children: [

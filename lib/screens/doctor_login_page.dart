@@ -20,6 +20,7 @@ class _DoctorLoginPageState extends State<DoctorLoginPage> {
   String _recordedFilePath = '';
   bool _isLoading = false;
   bool _voiceInputCompleted = false;
+  bool _obscurePassword = false;
 
   void _login() async {
     setState(() {
@@ -160,12 +161,11 @@ class _DoctorLoginPageState extends State<DoctorLoginPage> {
               icon: Icons.email_outlined,
             ),
             const SizedBox(height: 10),
-            _buildInputField(
+            _buildPasswordField(
               controller: _passwordController,
               label: 'Password',
               hint: 'Enter your password',
               icon: Icons.lock_outline,
-              obscureText: true,
             ),
             const SizedBox(height: 20),
             ElevatedButton.icon(
@@ -247,7 +247,6 @@ class _DoctorLoginPageState extends State<DoctorLoginPage> {
     required String label,
     required String hint,
     required IconData icon,
-    bool obscureText = false,
   }) {
     return Container(
       decoration: BoxDecoration(
@@ -263,11 +262,52 @@ class _DoctorLoginPageState extends State<DoctorLoginPage> {
       ),
       child: TextField(
         controller: controller,
-        obscureText: obscureText,
         decoration: InputDecoration(
           labelText: label,
           hintText: hint,
           prefixIcon: Icon(icon, color: Colors.teal),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPasswordField({
+    required TextEditingController controller,
+    required String label,
+    required String hint,
+    required IconData icon,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.grey[100],
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 10,
+            offset: Offset(0, 5),
+          ),
+        ],
+      ),
+      child: TextField(
+        controller: controller,
+        obscureText: !_obscurePassword,
+        decoration: InputDecoration(
+          labelText: label,
+          hintText: hint,
+          prefixIcon: Icon(icon, color: Colors.teal),
+          suffixIcon: IconButton(
+            icon: Icon(
+              _obscurePassword ? Icons.visibility : Icons.visibility_off,
+              color: Colors.teal,
+            ),
+            onPressed: () {
+              setState(() {
+                _obscurePassword = !_obscurePassword;
+              });
+            },
+          ),
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         ),
       ),
