@@ -10,7 +10,7 @@ class UserMessagePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Messages for $userEmail'),
+        title: Text('Messages'),
         centerTitle: true,
       ),
       body: StreamBuilder<QuerySnapshot>(
