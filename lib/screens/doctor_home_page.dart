@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:harry/screens/appoinment_booked_page.dart';
 import 'package:harry/screens/set_schedule_page.dart';
 import 'package:harry/screens/view_report_page.dart';
+import 'package:harry/screens/doctor_message_page.dart';
 
 class DoctorHomePage extends StatelessWidget {
   const DoctorHomePage({super.key});
@@ -111,6 +112,28 @@ class DoctorHomePage extends StatelessWidget {
                         label: const Text('View Report'),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.orange,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20.0, vertical: 15.0),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 15.0),
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => DoctorMessagePage(),
+                            ),
+                          );
+                        },
+                        icon: const Icon(Icons.message_outlined, size: 20.0),
+                        label: const Text('Send Message'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              const Color.fromARGB(255, 4, 233, 245),
                           padding: const EdgeInsets.symmetric(
                               horizontal: 20.0, vertical: 15.0),
                           shape: RoundedRectangleBorder(

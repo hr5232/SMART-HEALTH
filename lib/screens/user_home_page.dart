@@ -1,25 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:harry/screens/user_booked_appointments_page.dart';
-import 'package:harry/screens/view_remainders_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'about_us_page.dart';
-import 'help_page.dart';
 import 'ambulance_booking_page.dart';
-import 'virtual_physical_page.dart';
+import 'help_page.dart';
 import 'upload_medical_report_page.dart';
+import 'user_booked_appointments_page.dart';
+import 'user_message_page.dart';
+import 'virtual_physical_page.dart';
+import 'view_remainders_page.dart';
 
 class UserHomePage extends StatelessWidget {
   const UserHomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Fetch the logged-in user's email
+    final userEmail = FirebaseAuth.instance.currentUser?.email;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
           'User Home Page',
           style: TextStyle(
-            fontWeight: FontWeight.bold, // Makes the text bold
-            //  decoration: TextDecoration.underline, // Underlines the text
-            fontSize: 22.0, // Optional: Adjust size for better styling
+            fontWeight: FontWeight.bold,
+            fontSize: 22.0,
           ),
         ),
         backgroundColor: const Color.fromARGB(255, 1, 133, 118),
@@ -102,6 +106,33 @@ class UserHomePage extends StatelessWidget {
                     );
                   },
                   icon: Icons.assignment,
+                ),
+
+                // My Messages Button
+                _buildCardButton(
+                  context,
+                  label: 'My Messages',
+                  color: const Color.fromARGB(255, 1, 59, 136),
+                  onPressed: () {
+                    if (userEmail != null) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              UserMessagePage(userEmail: userEmail),
+                        ),
+                      );
+                    } else {
+                      // Show an error if the userEmail is null
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                              'Error: Unable to fetch user email. Please log in again.'),
+                        ),
+                      );
+                    }
+                  },
+                  icon: Icons.message_outlined,
                 ),
 
                 // Ambulance Booking Button
