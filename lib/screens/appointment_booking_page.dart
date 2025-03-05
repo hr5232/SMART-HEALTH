@@ -85,7 +85,7 @@ class _AppointmentBookingPageState extends State<AppointmentBookingPage> {
         final generatedSlots = _generateTimeSlots(scheduleString);
 
         final bookedSnapshot = await FirebaseFirestore.instance
-            .collection('appointments')
+            .collection('online_appointments')
             .where('doctorEmail', isEqualTo: _selectedDoctorEmail)
             .where('appointmentDate', isEqualTo: dateString)
             .get();
